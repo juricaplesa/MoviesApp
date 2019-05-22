@@ -1,0 +1,21 @@
+<resources>
+
+    <string name="app_name">MoviesApp</string>
+
+    <!--Common-->
+    <string name="common_error_message">Something went wrong!</string>
+
+    <!--Search-->
+    <string name="search_input_hint">search movies</string>
+    <string name="search_input_initial_text">hey, try to search\n for your favorite movie</string>
+    <string name="search_input_empty_text">sorry,\n we couldn\'t find any movies</string>
+
+    <!--Details-->
+    <string name="details_title">title</string>
+    <string name="details_year">year</string>
+    <string name="details_genre">genre</string>
+    <string name="details_director">director</string>
+    <string name="details_actors">actors</string>
+    <string name="details_plot">plot</string>
+
+</resources>
