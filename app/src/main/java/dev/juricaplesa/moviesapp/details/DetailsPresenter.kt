@@ -1,5 +1,6 @@
 package dev.juricaplesa.moviesapp.details
 
+import android.text.TextUtils
 import dev.juricaplesa.moviesapp.api.ApiProvider
 import dev.juricaplesa.moviesapp.api.MovieDetailsResponse
 import io.reactivex.Scheduler
@@ -11,67 +12,75 @@ import io.reactivex.rxkotlin.subscribeBy
  * Created by Jurica Pleša
  */
 class DetailsPresenter constructor(
-        private val superheroApi: ApiProvider,
-        private val mProcessScheduler: Scheduler,
-        private val mAndroidScheduler: Scheduler
+    private val apiProvider: ApiProvider,
+    private val processScheduler: Scheduler,
+    private val androidScheduler: Scheduler
 ) : DetailsContract.Presenter {
 
-    private lateinit var mView: DetailsContract.View
+    private lateinit var view: DetailsContract.View
 
-    private val mDisposables: CompositeDisposable = CompositeDisposable()
+    private val disposables: CompositeDisposable = CompositeDisposable()
 
     override fun injectView(view: DetailsContract.View) {
-        this.mView = view
+        this.view = view
     }
 
     override fun getMovieDetails(moviesImdbId: String) {
-        mDisposables.clear()
-        if (!mView.isActive()) {
+        disposables.clear()
+        if (!view.isActive()) {
             return
         }
 
-        mView.showLoadingIndicator()
+        if (TextUtils.isEmpty(moviesImdbId)) {
+            view.showErrorMessage()
+            return
+        }
 
-        superheroApi.getMovieDetails(moviesImdbId)
-                .subscribeOn(mProcessScheduler)
-                .observeOn(mAndroidScheduler, true)
+        view.showLoadingIndicator()
+
+        apiProvider.getMovieDetails(moviesImdbId)
+                .subscribeOn(processScheduler)
+                .observeOn(androidScheduler, true)
                 .subscribeBy(
                         onNext = {
-                            if (mView.isActive()) {
+                            if (view.isActive()) {
                                 if (it.isSuccessful.toBoolean()) {
                                     setMovieDetails(it)
                                 } else {
-                                    mView.showErrorMessage()
+                                    view.showErrorMessage()
                                 }
-                                mView.hideLoadingIndicator()
+                                view.hideLoadingIndicator()
                             }
                         },
                         onError = {
-                            if (mView.isActive()) {
-                                mView.showErrorMessage()
-                                mView.hideLoadingIndicator()
+                            if (view.isActive()) {
+                                view.showErrorMessage()
+                                view.hideLoadingIndicator()
                             }
                         }
                 )
-                .addTo(mDisposables)
+                .addTo(disposables)
     }
 
     private fun setMovieDetails(movie: MovieDetailsResponse) {
-        if (!mView.isActive()) {
+        if (!view.isActive()) {
             return
         }
 
-        mView.displayTitle(movie.title)
-        mView.displayYear(movie.year)
-        mView.displayGenre(movie.genre)
-        mView.displayDirector(movie.director)
-        mView.displayActors(movie.actors)
-        mView.displayPlot(movie.plot)
-        mView.displayPoster(movie.poster)
+        view.displayTitle(movie.title)
+        view.displayYear(movie.year)
+        view.displayGenre(movie.genre)
+        view.displayDirector(movie.director)
+        view.displayActors(movie.actors)
+        view.displayPlot(movie.plot)
+        view.displayPoster(movie.poster)
     }
 
     override fun unsubscribe() {
-
+        if (view.isActive()) {
+            view.hideLoadingIndicator()
+        }
+        disposables.clear()
     }
 
 }

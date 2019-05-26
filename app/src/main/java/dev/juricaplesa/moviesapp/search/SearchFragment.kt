@@ -31,16 +31,16 @@ import java.util.concurrent.TimeUnit
  */
 class SearchFragment : BaseFragment(), SearchContract.View, OnSearchItemClickListener {
 
-    lateinit var mPresenter: SearchPresenter
+    private lateinit var presenter: SearchPresenter
 
-    private val mAdapter: SearchAdapter = SearchAdapter()
-    private val mDisposables: CompositeDisposable = CompositeDisposable()
+    private val adapter: SearchAdapter = SearchAdapter()
+    private val disposables: CompositeDisposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mPresenter = SearchPresenter(App.apiProvider, Schedulers.io(), AndroidSchedulers.mainThread())
-        mPresenter.injectView(this)
-        mAdapter.setListener(this)
+        presenter = SearchPresenter(App.apiProvider, Schedulers.io(), AndroidSchedulers.mainThread())
+        presenter.injectView(this)
+        adapter.setListener(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -86,11 +86,11 @@ class SearchFragment : BaseFragment(), SearchContract.View, OnSearchItemClickLis
     }
 
     override fun setMovies(movies: List<Movie>) {
-        mAdapter.setData(movies)
+        adapter.setData(movies)
     }
 
     override fun clearMovies() {
-        mAdapter.clearData()
+        adapter.clearData()
     }
 
     override fun isActive(): Boolean {
@@ -105,14 +105,14 @@ class SearchFragment : BaseFragment(), SearchContract.View, OnSearchItemClickLis
     }
 
     override fun onPause() {
-        mPresenter.unsubscribe()
-        mDisposables.clear()
+        presenter.unsubscribe()
+        disposables.clear()
         super.onPause()
     }
 
     private fun setupRecyclerView() {
         recyclerView.layoutManager = LinearLayoutManager(context)
-        recyclerView.adapter = mAdapter
+        recyclerView.adapter = adapter
     }
 
     private fun setupSearchView() {
@@ -122,10 +122,10 @@ class SearchFragment : BaseFragment(), SearchContract.View, OnSearchItemClickLis
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
                         onNext = {
-                            mPresenter.searchMovies(it.toString())
+                            presenter.searchMovies(it.toString())
                         }
                 )
-                .addTo(mDisposables)
+                .addTo(disposables)
     }
 
 }

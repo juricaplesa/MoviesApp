@@ -11,66 +11,66 @@ import io.reactivex.rxkotlin.subscribeBy
  * Created by Jurica Pleša
  */
 class SearchPresenter constructor(
-        private val superheroApi: ApiProvider,
-        private val mProcessScheduler: Scheduler,
-        private val mAndroidScheduler: Scheduler
+    private val apiProvider: ApiProvider,
+    private val processScheduler: Scheduler,
+    private val androidScheduler: Scheduler
 ) : SearchContract.Presenter {
 
-    private lateinit var mView: SearchContract.View
+    private lateinit var view: SearchContract.View
 
-    private val mDisposables: CompositeDisposable = CompositeDisposable()
+    private val disposables: CompositeDisposable = CompositeDisposable()
 
     override fun injectView(view: SearchContract.View) {
-        this.mView = view
+        this.view = view
     }
 
     override fun searchMovies(searchInput: String) {
-        mDisposables.clear()
-        if (!mView.isActive()) {
+        disposables.clear()
+        if (!view.isActive()) {
             return
         }
 
-        mView.hideInitialMessage()
-        mView.hideEmptyMessage()
+        view.hideInitialMessage()
+        view.hideEmptyMessage()
 
         if (TextUtils.isEmpty(searchInput) || searchInput.length < 3) {
-            mView.clearMovies()
-            mView.showInitialMessage()
+            view.clearMovies()
+            view.showInitialMessage()
             return
         }
 
-        mView.showLoadingIndicator()
+        view.showLoadingIndicator()
 
-        superheroApi.searchMovies(searchInput)
-                .subscribeOn(mProcessScheduler)
-                .observeOn(mAndroidScheduler, true)
+        apiProvider.searchMovies(searchInput)
+                .subscribeOn(processScheduler)
+                .observeOn(androidScheduler, true)
                 .subscribeBy(
                         onNext = {
-                            if (mView.isActive()) {
+                            if (view.isActive()) {
                                 if (it.isSuccessful.toBoolean()) {
-                                    mView.setMovies(it.data)
+                                    view.setMovies(it.data)
                                 } else {
-                                    mView.clearMovies()
-                                    mView.showEmptyMessage()
+                                    view.clearMovies()
+                                    view.showEmptyMessage()
                                 }
-                                mView.hideLoadingIndicator()
+                                view.hideLoadingIndicator()
                             }
                         },
                         onError = {
-                            if (mView.isActive()) {
-                                mView.showErrorMessage()
-                                mView.hideLoadingIndicator()
+                            if (view.isActive()) {
+                                view.showErrorMessage()
+                                view.hideLoadingIndicator()
                             }
                         }
                 )
-                .addTo(mDisposables)
+                .addTo(disposables)
     }
 
     override fun unsubscribe() {
-        if (mView.isActive()) {
-            mView.hideLoadingIndicator()
+        if (view.isActive()) {
+            view.hideLoadingIndicator()
         }
-        mDisposables.clear()
+        disposables.clear()
     }
 
 }

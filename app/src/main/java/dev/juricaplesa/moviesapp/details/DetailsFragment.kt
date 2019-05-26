@@ -1,7 +1,6 @@
 package dev.juricaplesa.moviesapp.details
 
 import android.os.Bundle
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -23,9 +22,9 @@ import kotlinx.android.synthetic.main.fragment_details.*
  */
 class DetailsFragment : BaseFragment(), DetailsContract.View {
 
-    lateinit var mPresenter: DetailsPresenter
+    private lateinit var presenter: DetailsPresenter
 
-    lateinit var moviesImdbId: String
+    private lateinit var moviesImdbId: String
 
     companion object {
         fun newInstance(moviesImdbId: String): DetailsFragment {
@@ -43,8 +42,8 @@ class DetailsFragment : BaseFragment(), DetailsContract.View {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
 
-        mPresenter = DetailsPresenter(App.apiProvider, Schedulers.io(), AndroidSchedulers.mainThread())
-        mPresenter.injectView(this)
+        presenter = DetailsPresenter(App.apiProvider, Schedulers.io(), AndroidSchedulers.mainThread())
+        presenter.injectView(this)
 
         val bundle = arguments
         bundle?.let { moviesImdbId = bundle.getString(EXTRA_MOVIES_IMDB_ID, "") }
@@ -52,9 +51,9 @@ class DetailsFragment : BaseFragment(), DetailsContract.View {
     }
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
 
         return inflater.inflate(R.layout.fragment_details, container, false)
@@ -64,9 +63,7 @@ class DetailsFragment : BaseFragment(), DetailsContract.View {
         super.onViewCreated(view, savedInstanceState)
         setupToolbar()
 
-        if (!TextUtils.isEmpty(moviesImdbId)) {
-            mPresenter.getMovieDetails(moviesImdbId)
-        }
+        presenter.getMovieDetails(moviesImdbId)
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -114,10 +111,10 @@ class DetailsFragment : BaseFragment(), DetailsContract.View {
 
     override fun displayPoster(posterUrl: String) {
         Glide.with(this)
-                .load(posterUrl)
-                .centerInside()
-                .placeholder(R.drawable.ic_image_placeholder)
-                .into(poster)
+            .load(posterUrl)
+            .centerInside()
+            .placeholder(R.drawable.ic_image_placeholder)
+            .into(poster)
     }
 
     override fun isActive(): Boolean {

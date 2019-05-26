@@ -14,16 +14,15 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import static org.mockito.Mockito.validateMockitoUsage;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Created by Jurica Pleša
  */
 public class DetailsPresenterTest {
 
-    private static final String IMDB_ID = "tt1375666";
+    private static final String VALID_IMDB_ID = "tt1375666";
+    private static final String INVALID_IMDB_ID = "";
 
     @Mock
     private DetailsContract.View mDetailsView;
@@ -52,10 +51,20 @@ public class DetailsPresenterTest {
     }
 
     @Test
-    public void getMovieDetails_successfulRequest_successfulResponse() {
-        when(mApiProvider.getMovieDetails(IMDB_ID)).thenReturn(Observable.just(mSuccessfulMovieDetailsResponse));
+    public void getMovieDetails_invalidImdbId() {
+        mDetailsPresenter.getMovieDetails(INVALID_IMDB_ID);
 
-        mDetailsPresenter.getMovieDetails(IMDB_ID);
+        verify(mDetailsView).showErrorMessage();
+
+        verify(mDetailsView, never()).hideLoadingIndicator();
+        verify(mApiProvider, never()).getMovieDetails(INVALID_IMDB_ID);
+    }
+
+    @Test
+    public void getMovieDetails_validImdbId_successfulRequest_successfulResponse() {
+        when(mApiProvider.getMovieDetails(VALID_IMDB_ID)).thenReturn(Observable.just(mSuccessfulMovieDetailsResponse));
+
+        mDetailsPresenter.getMovieDetails(VALID_IMDB_ID);
 
         verify(mDetailsView).hideLoadingIndicator();
 
@@ -69,20 +78,20 @@ public class DetailsPresenterTest {
     }
 
     @Test
-    public void getMovieDetails_successfulRequest_errorResponse() {
-        when(mApiProvider.getMovieDetails(IMDB_ID)).thenReturn(Observable.just(mErrorMovieDetailsResponse));
+    public void getMovieDetails_validImdbId_successfulRequest_errorResponse() {
+        when(mApiProvider.getMovieDetails(VALID_IMDB_ID)).thenReturn(Observable.just(mErrorMovieDetailsResponse));
 
-        mDetailsPresenter.getMovieDetails(IMDB_ID);
+        mDetailsPresenter.getMovieDetails(VALID_IMDB_ID);
 
         verify(mDetailsView).showErrorMessage();
         verify(mDetailsView).hideLoadingIndicator();
     }
 
     @Test
-    public void getMovieDetails_errorRequest() {
-        when(mApiProvider.getMovieDetails(IMDB_ID)).thenReturn(Observable.<MovieDetailsResponse>error(new Throwable()));
+    public void getMovieDetails_validImdbId_errorRequest() {
+        when(mApiProvider.getMovieDetails(VALID_IMDB_ID)).thenReturn(Observable.<MovieDetailsResponse>error(new Throwable()));
 
-        mDetailsPresenter.getMovieDetails(IMDB_ID);
+        mDetailsPresenter.getMovieDetails(VALID_IMDB_ID);
 
         verify(mDetailsView).showErrorMessage();
         verify(mDetailsView).hideLoadingIndicator();
