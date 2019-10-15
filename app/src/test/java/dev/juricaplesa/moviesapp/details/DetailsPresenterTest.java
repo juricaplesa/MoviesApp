@@ -4,8 +4,8 @@ import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory;
 import dev.juricaplesa.moviesapp.JsonResource;
-import dev.juricaplesa.moviesapp.api.ApiProvider;
 import dev.juricaplesa.moviesapp.api.MovieDetailsResponse;
+import dev.juricaplesa.moviesapp.api.MoviesApi;
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
 import org.junit.After;
@@ -27,7 +27,7 @@ public class DetailsPresenterTest {
     @Mock
     private DetailsContract.View mDetailsView;
     @Mock
-    private ApiProvider mApiProvider;
+    private MoviesApi mMoviesApi;
 
     private DetailsPresenter mDetailsPresenter;
     private MovieDetailsResponse mSuccessfulMovieDetailsResponse;
@@ -46,7 +46,7 @@ public class DetailsPresenterTest {
         mSuccessfulMovieDetailsResponse = jsonAdapter.fromJson(successfulResponse);
         mErrorMovieDetailsResponse = jsonAdapter.fromJson(errorResponse);
 
-        mDetailsPresenter = new DetailsPresenter(mApiProvider, Schedulers.trampoline(), Schedulers.trampoline());
+        mDetailsPresenter = new DetailsPresenter(mMoviesApi, Schedulers.trampoline(), Schedulers.trampoline());
         mDetailsPresenter.injectView(mDetailsView);
     }
 
@@ -57,12 +57,12 @@ public class DetailsPresenterTest {
         verify(mDetailsView).showErrorMessage();
 
         verify(mDetailsView, never()).hideLoadingIndicator();
-        verify(mApiProvider, never()).getMovieDetails(INVALID_IMDB_ID);
+        verify(mMoviesApi, never()).getMovieDetails(INVALID_IMDB_ID);
     }
 
     @Test
     public void getMovieDetails_validImdbId_successfulRequest_successfulResponse() {
-        when(mApiProvider.getMovieDetails(VALID_IMDB_ID)).thenReturn(Observable.just(mSuccessfulMovieDetailsResponse));
+        when(mMoviesApi.getMovieDetails(VALID_IMDB_ID)).thenReturn(Observable.just(mSuccessfulMovieDetailsResponse));
 
         mDetailsPresenter.getMovieDetails(VALID_IMDB_ID);
 
@@ -79,7 +79,7 @@ public class DetailsPresenterTest {
 
     @Test
     public void getMovieDetails_validImdbId_successfulRequest_errorResponse() {
-        when(mApiProvider.getMovieDetails(VALID_IMDB_ID)).thenReturn(Observable.just(mErrorMovieDetailsResponse));
+        when(mMoviesApi.getMovieDetails(VALID_IMDB_ID)).thenReturn(Observable.just(mErrorMovieDetailsResponse));
 
         mDetailsPresenter.getMovieDetails(VALID_IMDB_ID);
 
@@ -89,7 +89,7 @@ public class DetailsPresenterTest {
 
     @Test
     public void getMovieDetails_validImdbId_errorRequest() {
-        when(mApiProvider.getMovieDetails(VALID_IMDB_ID)).thenReturn(Observable.<MovieDetailsResponse>error(new Throwable()));
+        when(mMoviesApi.getMovieDetails(VALID_IMDB_ID)).thenReturn(Observable.error(new Throwable()));
 
         mDetailsPresenter.getMovieDetails(VALID_IMDB_ID);
 

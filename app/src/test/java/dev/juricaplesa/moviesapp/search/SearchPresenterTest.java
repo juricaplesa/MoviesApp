@@ -2,24 +2,19 @@ package dev.juricaplesa.moviesapp.search;
 
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
-
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory;
+import dev.juricaplesa.moviesapp.JsonResource;
+import dev.juricaplesa.moviesapp.api.MoviesApi;
+import dev.juricaplesa.moviesapp.api.SearchResponse;
+import io.reactivex.Observable;
+import io.reactivex.schedulers.Schedulers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import dev.juricaplesa.moviesapp.JsonResource;
-import dev.juricaplesa.moviesapp.api.ApiProvider;
-import dev.juricaplesa.moviesapp.api.SearchResponse;
-import io.reactivex.Observable;
-import io.reactivex.schedulers.Schedulers;
-
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.validateMockitoUsage;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Created by Jurica Pleša
@@ -33,7 +28,7 @@ public class SearchPresenterTest {
     @Mock
     private SearchContract.View mSearchView;
     @Mock
-    private ApiProvider mApiProvider;
+    private MoviesApi mMoviesApi;
 
     private SearchPresenter mSearchPresenter;
     private SearchResponse mSuccessfulSearchResponse;
@@ -52,7 +47,7 @@ public class SearchPresenterTest {
         mSuccessfulSearchResponse = jsonAdapter.fromJson(successfulResponse);
         mErrorSearchResponse = jsonAdapter.fromJson(errorResponse);
 
-        mSearchPresenter = new SearchPresenter(mApiProvider, Schedulers.trampoline(), Schedulers.trampoline());
+        mSearchPresenter = new SearchPresenter(mMoviesApi, Schedulers.trampoline(), Schedulers.trampoline());
         mSearchPresenter.injectView(mSearchView);
     }
 
@@ -63,7 +58,7 @@ public class SearchPresenterTest {
         verify(mSearchView).clearMovies();
         verify(mSearchView).showInitialMessage();
 
-        verify(mApiProvider, never()).searchMovies(EMPTY_INPUT);
+        verify(mMoviesApi, never()).searchMovies(EMPTY_INPUT);
     }
 
     @Test
@@ -73,12 +68,12 @@ public class SearchPresenterTest {
         verify(mSearchView).clearMovies();
         verify(mSearchView).showInitialMessage();
 
-        verify(mApiProvider, never()).searchMovies(EMPTY_INPUT);
+        verify(mMoviesApi, never()).searchMovies(EMPTY_INPUT);
     }
 
     @Test
     public void searchMovies_validInput_successfulRequest_successfulResponse() {
-        when(mApiProvider.searchMovies(VALID_INPUT)).thenReturn(Observable.just(mSuccessfulSearchResponse));
+        when(mMoviesApi.searchMovies(VALID_INPUT)).thenReturn(Observable.just(mSuccessfulSearchResponse));
 
         mSearchPresenter.searchMovies(VALID_INPUT);
 
@@ -88,7 +83,7 @@ public class SearchPresenterTest {
 
     @Test
     public void searchMovies_validInput_successfulRequest_errorResponse() {
-        when(mApiProvider.searchMovies(VALID_INPUT)).thenReturn(Observable.just(mErrorSearchResponse));
+        when(mMoviesApi.searchMovies(VALID_INPUT)).thenReturn(Observable.just(mErrorSearchResponse));
 
         mSearchPresenter.searchMovies(VALID_INPUT);
 
@@ -99,7 +94,7 @@ public class SearchPresenterTest {
 
     @Test
     public void searchMovies_validInput_errorRequest() {
-        when(mApiProvider.searchMovies(VALID_INPUT)).thenReturn(Observable.<SearchResponse>error(new Throwable()));
+        when(mMoviesApi.searchMovies(VALID_INPUT)).thenReturn(Observable.<SearchResponse>error(new Throwable()));
 
         mSearchPresenter.searchMovies(VALID_INPUT);
 
