@@ -25,20 +25,21 @@ import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_search.*
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 /**
  * Created by Jurica Pleša
  */
 class SearchFragment : BaseFragment(), SearchContract.View, OnSearchItemClickListener {
 
-    private lateinit var presenter: SearchPresenter
+    @Inject
+    lateinit var presenter: SearchContract.Presenter
 
     private val adapter: SearchAdapter = SearchAdapter()
     private val disposables: CompositeDisposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        presenter = SearchPresenter(App.apiProvider, Schedulers.io(), AndroidSchedulers.mainThread())
         presenter.injectView(this)
         adapter.setListener(this)
     }

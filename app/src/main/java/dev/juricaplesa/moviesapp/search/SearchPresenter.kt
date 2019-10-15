@@ -1,19 +1,23 @@
 package dev.juricaplesa.moviesapp.search
 
 import android.text.TextUtils
-import dev.juricaplesa.moviesapp.api.ApiProvider
+import dev.juricaplesa.moviesapp.api.MoviesApi
+import dev.juricaplesa.moviesapp.common.ANDROID_SCHEDULER
+import dev.juricaplesa.moviesapp.common.PROCESS_SCHEDULER
 import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
+import javax.inject.Inject
+import javax.inject.Named
 
 /**
  * Created by Jurica Pleša
  */
-class SearchPresenter constructor(
-    private val apiProvider: ApiProvider,
-    private val processScheduler: Scheduler,
-    private val androidScheduler: Scheduler
+class SearchPresenter @Inject constructor(
+    private val moviesApi: MoviesApi,
+    @Named(PROCESS_SCHEDULER) private val processScheduler: Scheduler,
+    @Named(ANDROID_SCHEDULER) private val androidScheduler: Scheduler
 ) : SearchContract.Presenter {
 
     private lateinit var view: SearchContract.View
@@ -41,7 +45,7 @@ class SearchPresenter constructor(
 
         view.showLoadingIndicator()
 
-        apiProvider.searchMovies(searchInput)
+        moviesApi.searchMovies(searchInput)
                 .subscribeOn(processScheduler)
                 .observeOn(androidScheduler, true)
                 .subscribeBy(

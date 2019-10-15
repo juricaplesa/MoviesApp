@@ -7,22 +7,21 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.bumptech.glide.Glide
-import dev.juricaplesa.moviesapp.App
 import dev.juricaplesa.moviesapp.R
 import dev.juricaplesa.moviesapp.base.BaseFragment
 import dev.juricaplesa.moviesapp.common.EXTRA_MOVIES_IMDB_ID
 import dev.juricaplesa.moviesapp.common.gone
 import dev.juricaplesa.moviesapp.common.show
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_details.*
+import javax.inject.Inject
 
 /**
  * Created by Jurica Pleša
  */
 class DetailsFragment : BaseFragment(), DetailsContract.View {
 
-    private lateinit var presenter: DetailsPresenter
+    @Inject
+    lateinit var presenter: DetailsContract.Presenter
 
     private lateinit var moviesImdbId: String
 
@@ -42,7 +41,6 @@ class DetailsFragment : BaseFragment(), DetailsContract.View {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
 
-        presenter = DetailsPresenter(App.apiProvider, Schedulers.io(), AndroidSchedulers.mainThread())
         presenter.injectView(this)
 
         val bundle = arguments

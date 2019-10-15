@@ -1,20 +1,24 @@
 package dev.juricaplesa.moviesapp.details
 
 import android.text.TextUtils
-import dev.juricaplesa.moviesapp.api.ApiProvider
 import dev.juricaplesa.moviesapp.api.MovieDetailsResponse
+import dev.juricaplesa.moviesapp.api.MoviesApi
+import dev.juricaplesa.moviesapp.common.ANDROID_SCHEDULER
+import dev.juricaplesa.moviesapp.common.PROCESS_SCHEDULER
 import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
+import javax.inject.Inject
+import javax.inject.Named
 
 /**
  * Created by Jurica Pleša
  */
-class DetailsPresenter constructor(
-    private val apiProvider: ApiProvider,
-    private val processScheduler: Scheduler,
-    private val androidScheduler: Scheduler
+class DetailsPresenter @Inject constructor(
+    private val moviesApi: MoviesApi,
+    @Named(PROCESS_SCHEDULER) private val processScheduler: Scheduler,
+    @Named(ANDROID_SCHEDULER) private val androidScheduler: Scheduler
 ) : DetailsContract.Presenter {
 
     private lateinit var view: DetailsContract.View
@@ -38,7 +42,7 @@ class DetailsPresenter constructor(
 
         view.showLoadingIndicator()
 
-        apiProvider.getMovieDetails(moviesImdbId)
+        moviesApi.getMovieDetails(moviesImdbId)
                 .subscribeOn(processScheduler)
                 .observeOn(androidScheduler, true)
                 .subscribeBy(

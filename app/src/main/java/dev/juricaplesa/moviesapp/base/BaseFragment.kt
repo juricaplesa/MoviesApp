@@ -1,14 +1,14 @@
 package dev.juricaplesa.moviesapp.base
 
-import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
+import dagger.android.support.DaggerFragment
 import dev.juricaplesa.moviesapp.R
 
 /**
  * Created by Jurica Pleša
  */
-open class BaseFragment : Fragment() {
+open class BaseFragment : DaggerFragment() {
 
     protected fun setActionBar(toolbar: Toolbar) {
         if (activity is AppCompatActivity) {
