@@ -19,12 +19,8 @@ import dev.juricaplesa.moviesapp.models.Movie
 import dev.juricaplesa.moviesapp.search.adapter.OnSearchItemClickListener
 import dev.juricaplesa.moviesapp.search.adapter.SearchAdapter
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.rxkotlin.addTo
-import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_search.*
-import java.util.concurrent.TimeUnit
 
 /**
  * Created by Jurica Pleša
@@ -34,7 +30,6 @@ class SearchFragment : BaseFragment(), SearchContract.View, OnSearchItemClickLis
     private lateinit var presenter: SearchPresenter
 
     private val adapter: SearchAdapter = SearchAdapter()
-    private val disposables: CompositeDisposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,9 +47,18 @@ class SearchFragment : BaseFragment(), SearchContract.View, OnSearchItemClickLis
         setupRecyclerView()
     }
 
+    private fun setupRecyclerView() {
+        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.adapter = adapter
+    }
+
     override fun onResume() {
         super.onResume()
         setupSearchView()
+    }
+
+    private fun setupSearchView() {
+        presenter.startObservingSearchTextChanges(RxTextView.textChanges(searchInput))
     }
 
     override fun showInitialMessage() {
@@ -106,26 +110,7 @@ class SearchFragment : BaseFragment(), SearchContract.View, OnSearchItemClickLis
 
     override fun onPause() {
         presenter.unsubscribe()
-        disposables.clear()
         super.onPause()
-    }
-
-    private fun setupRecyclerView() {
-        recyclerView.layoutManager = LinearLayoutManager(context)
-        recyclerView.adapter = adapter
-    }
-
-    private fun setupSearchView() {
-        RxTextView.textChanges(searchInput)
-                .skipInitialValue()
-                .debounce(500, TimeUnit.MILLISECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(
-                        onNext = {
-                            presenter.searchMovies(it.toString())
-                        }
-                )
-                .addTo(disposables)
     }
 
 }

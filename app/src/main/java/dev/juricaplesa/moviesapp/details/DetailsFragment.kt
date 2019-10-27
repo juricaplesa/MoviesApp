@@ -66,6 +66,11 @@ class DetailsFragment : BaseFragment(), DetailsContract.View {
         presenter.getMovieDetails(moviesImdbId)
     }
 
+    private fun setupToolbar() {
+        setActionBar(toolbar)
+        setHomeAsUp()
+    }
+
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             android.R.id.home -> activity?.onBackPressed()
@@ -121,8 +126,4 @@ class DetailsFragment : BaseFragment(), DetailsContract.View {
         return isAdded
     }
 
-    private fun setupToolbar() {
-        setActionBar(toolbar)
-        setHomeAsUp()
-    }
 }
