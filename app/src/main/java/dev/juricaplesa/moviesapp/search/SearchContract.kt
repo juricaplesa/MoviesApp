@@ -1,5 +1,6 @@
 package dev.juricaplesa.moviesapp.search
 
+import com.jakewharton.rxbinding2.InitialValueObservable
 import dev.juricaplesa.moviesapp.base.BasePresenter
 import dev.juricaplesa.moviesapp.base.BaseView
 import dev.juricaplesa.moviesapp.models.Movie
@@ -32,7 +33,7 @@ interface SearchContract {
 
     interface Presenter : BasePresenter<View> {
 
-        fun searchMovies(searchInput: String)
+        fun startObservingSearchTextChanges(searchTextChangesObservable: InitialValueObservable<CharSequence>)
 
     }
 
