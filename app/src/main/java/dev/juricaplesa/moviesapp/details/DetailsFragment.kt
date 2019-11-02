@@ -71,8 +71,8 @@ class DetailsFragment : BaseFragment(), DetailsContract.View {
         setHomeAsUp()
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item?.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
             android.R.id.home -> activity?.onBackPressed()
         }
         return super.onOptionsItemSelected(item)

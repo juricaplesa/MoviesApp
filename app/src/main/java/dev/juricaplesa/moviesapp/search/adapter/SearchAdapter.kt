@@ -1,6 +1,6 @@
 package dev.juricaplesa.moviesapp.search.adapter
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import dev.juricaplesa.moviesapp.R
