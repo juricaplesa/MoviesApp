@@ -1,11 +1,12 @@
 package dev.juricaplesa.moviesapp.search
 
 import android.os.Bundle
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.jakewharton.rxbinding2.widget.RxTextView
 import dev.juricaplesa.moviesapp.App
 import dev.juricaplesa.moviesapp.MainActivity
@@ -14,7 +15,6 @@ import dev.juricaplesa.moviesapp.base.BaseFragment
 import dev.juricaplesa.moviesapp.common.gone
 import dev.juricaplesa.moviesapp.common.show
 import dev.juricaplesa.moviesapp.common.utils.KeyboardUtils
-import dev.juricaplesa.moviesapp.details.DetailsFragment
 import dev.juricaplesa.moviesapp.models.Movie
 import dev.juricaplesa.moviesapp.search.adapter.OnSearchItemClickListener
 import dev.juricaplesa.moviesapp.search.adapter.SearchAdapter
@@ -105,7 +105,8 @@ class SearchFragment : BaseFragment(), SearchContract.View, OnSearchItemClickLis
         activity.let {
             KeyboardUtils.hideKeyboard(activity as MainActivity)
         }
-        (activity as MainActivity).addFragment(DetailsFragment.newInstance(moviesImdbId))
+        val action = SearchFragmentDirections.actionSearchFragmentToDetailsFragment(moviesImdbId)
+        findNavController().navigate(action)
     }
 
     override fun onPause() {

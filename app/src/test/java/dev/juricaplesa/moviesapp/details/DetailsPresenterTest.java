@@ -23,7 +23,8 @@ public class DetailsPresenterTest {
 
     private static final String VALID_IMDB_ID = "tt1375666";
     private static final String INVALID_IMDB_ID = "";
-
+    //todo create view model test
+/*
     @Mock
     private DetailsContract.View mDetailsView;
     @Mock
@@ -101,5 +102,5 @@ public class DetailsPresenterTest {
     public void validate() {
         validateMockitoUsage();
     }
-
+*/
 }

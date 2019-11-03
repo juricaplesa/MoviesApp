@@ -2,128 +2,51 @@ package dev.juricaplesa.moviesapp.details
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import com.bumptech.glide.Glide
-import dev.juricaplesa.moviesapp.App
-import dev.juricaplesa.moviesapp.R
-import dev.juricaplesa.moviesapp.base.BaseFragment
-import dev.juricaplesa.moviesapp.common.EXTRA_MOVIES_IMDB_ID
-import dev.juricaplesa.moviesapp.common.gone
-import dev.juricaplesa.moviesapp.common.show
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.fragment_details.*
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.navArgs
+import dev.juricaplesa.moviesapp.common.getViewModelFactory
+import dev.juricaplesa.moviesapp.databinding.FragmentDetailsBinding
 
 /**
  * Created by Jurica Pleša
  */
-class DetailsFragment : BaseFragment(), DetailsContract.View {
+class DetailsFragment : Fragment() {
 
-    private lateinit var presenter: DetailsPresenter
+    private val viewModel by viewModels<DetailsViewModel> { getViewModelFactory() }
 
-    private lateinit var moviesImdbId: String
+    private val args: DetailsFragmentArgs by navArgs()
 
-    companion object {
-        fun newInstance(moviesImdbId: String): DetailsFragment {
-            val detailsFragment = DetailsFragment()
-
-            val bundle = Bundle()
-            bundle.putString(EXTRA_MOVIES_IMDB_ID, moviesImdbId)
-            detailsFragment.arguments = bundle
-
-            return detailsFragment
-        }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-
-        presenter = DetailsPresenter(App.apiProvider, Schedulers.io(), AndroidSchedulers.mainThread())
-        presenter.injectView(this)
-
-        val bundle = arguments
-        bundle?.let { moviesImdbId = bundle.getString(EXTRA_MOVIES_IMDB_ID, "") }
-
-    }
+    private lateinit var viewDataBinding: FragmentDetailsBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-        return inflater.inflate(R.layout.fragment_details, container, false)
+        viewDataBinding = FragmentDetailsBinding.inflate(inflater, container, false).apply {
+            viewmodel = viewModel
+        }.apply {
+            toolbar.setNavigationOnClickListener { view ->
+                view.findNavController().navigateUp()
+            }
+        }
+        return viewDataBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupToolbar()
+        viewDataBinding.lifecycleOwner = this.viewLifecycleOwner
+        viewModel.toastMessage.observe(viewLifecycleOwner, Observer {
+            Toast.makeText(context, getString(it), Toast.LENGTH_SHORT).show()
+        })
 
-        presenter.getMovieDetails(moviesImdbId)
-    }
-
-    private fun setupToolbar() {
-        setActionBar(toolbar)
-        setHomeAsUp()
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            android.R.id.home -> activity?.onBackPressed()
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
-    override fun showLoadingIndicator() {
-        progressBar.show()
-    }
-
-    override fun hideLoadingIndicator() {
-        progressBar.gone()
-    }
-
-    override fun showErrorMessage() {
-        Toast.makeText(context, getString(R.string.common_error_message), Toast.LENGTH_SHORT).show()
-    }
-
-    override fun displayTitle(title: String) {
-        toolbarTitle.text = title
-    }
-
-    override fun displayYear(year: String) {
-        yearTxt.text = year
-    }
-
-    override fun displayGenre(genre: String) {
-        genreTxt.text = genre
-    }
-
-    override fun displayDirector(director: String) {
-        directorTxt.text = director
-    }
-
-    override fun displayActors(actors: String) {
-        actorsTxt.text = actors
-    }
-
-    override fun displayPlot(plot: String) {
-        plotTxt.text = plot
-    }
-
-    override fun displayPoster(posterUrl: String) {
-        Glide.with(this)
-            .load(posterUrl)
-            .centerInside()
-            .placeholder(R.drawable.ic_image_placeholder)
-            .into(poster)
-    }
-
-    override fun isActive(): Boolean {
-        return isAdded
+        viewModel.getMovieDetails(args.moviesImdbId)
     }
 
 }

@@ -52,8 +52,6 @@ class ApiProvider(
         return moviesApi.searchMovies(searchInput)
     }
 
-    fun getMovieDetails(imdbId: String): Observable<MovieDetailsResponse> {
-        return moviesApi.getMovieDetails(imdbId)
-    }
+    suspend fun getMovieDetails(imdbId: String) = moviesApi.getMovieDetails(imdbId)
 
 }

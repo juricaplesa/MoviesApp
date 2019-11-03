@@ -11,19 +11,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        supportFragmentManager.beginTransaction()
-                .replace(R.id.main_fragment_container, SearchFragment())
-                .commit()
-    }
-
-    @Suppress("UNNECESSARY_SAFE_CALL")
-    fun addFragment(fragment: Fragment) {
-        fragment?.let {
-            supportFragmentManager.beginTransaction()
-                    .addToBackStack(null)
-                    .add(R.id.main_fragment_container, fragment)
-                    .commit()
-        }
     }
 
     override fun onBackPressed() {

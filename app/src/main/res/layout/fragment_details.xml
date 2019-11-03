@@ -1,137 +1,158 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/background_color">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/colorPrimary">
+    <data>
+        <import type="android.view.View"/>
 
-        <TextView
-            android:id="@+id/toolbarTitle"
-            style="@style/ToolbarTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="start"
-            android:ellipsize="end"
-            android:gravity="center"
-            android:maxLines="1" />
+        <variable
+                name="viewmodel"
+                type="dev.juricaplesa.moviesapp.details.DetailsViewModel"/>
+    </data>
 
-    </androidx.appcompat.widget.Toolbar>
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/toolbar">
-
-        <ScrollView
+    <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:overScrollMode="never">
+            android:background="@color/background_color">
 
-            <RelativeLayout
+        <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="24dp">
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/colorPrimary"
+                app:navigationIcon="@drawable/ic_back">
 
-                <ImageView
-                    android:id="@+id/poster"
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:scaleType="center"
-                    tools:ignore="ContentDescription" />
+            <TextView
+                    android:id="@+id/toolbarTitle"
+                    style="@style/ToolbarTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="start"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:text="@{viewmodel.movie.title}"/>
 
-                <TextView
-                    android:id="@+id/yearLabel"
+        </androidx.appcompat.widget.Toolbar>
+
+        <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/toolbar">
+
+            <ScrollView
                     android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:overScrollMode="never">
+
+                <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="24dp">
+
+                    <ImageView
+                            android:id="@+id/poster"
+                            android:layout_width="match_parent"
+                            android:layout_height="200dp"
+                            android:scaleType="center"
+                            tools:ignore="ContentDescription"
+                            app:imageFromUrl="@{viewmodel.movie.poster}"/>
+
+                    <TextView
+                            android:id="@+id/yearLabel"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/poster"
+                            android:text="@string/details_year"/>
+
+                    <TextView
+                            android:id="@+id/yearTxt"
+                            style="@style/DetailsText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/yearLabel"
+                            android:layout_marginBottom="12dp"
+                            android:text="@{viewmodel.movie.year}"/>
+
+                    <TextView
+                            android:id="@+id/genreLabel"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/yearTxt"
+                            android:text="@string/details_genre"/>
+
+                    <TextView
+                            android:id="@+id/genreTxt"
+                            style="@style/DetailsText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/genreLabel"
+                            android:layout_marginBottom="12dp"
+                            android:text="@{viewmodel.movie.genre}"/>
+
+                    <TextView
+                            android:id="@+id/directorLabel"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/genreTxt"
+                            android:text="@string/details_director"/>
+
+                    <TextView
+                            android:id="@+id/directorTxt"
+                            style="@style/DetailsText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/directorLabel"
+                            android:layout_marginBottom="12dp"
+                            android:text="@{viewmodel.movie.director}"/>
+
+                    <TextView
+                            android:id="@+id/actorsLabel"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/directorTxt"
+                            android:text="@string/details_actors"/>
+
+                    <TextView
+                            android:id="@+id/actorsTxt"
+                            style="@style/DetailsText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/actorsLabel"
+                            android:layout_marginBottom="12dp"
+                            android:text="@{viewmodel.movie.actors}"/>
+
+                    <TextView
+                            android:id="@+id/plotLabel"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/actorsTxt"
+                            android:text="@string/details_plot"/>
+
+                    <TextView
+                            android:id="@+id/plotTxt"
+                            style="@style/DetailsText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/plotLabel"
+                            android:layout_marginBottom="12dp"
+                            android:text="@{viewmodel.movie.plot}"/>
+
+                </RelativeLayout>
+
+            </ScrollView>
+
+            <ProgressBar
+                    android:id="@+id/progressBar"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/poster"
-                    android:text="@string/details_year" />
+                    android:layout_gravity="center"
+                    android:indeterminate="true"
+                    android:visibility="@{viewmodel.dataLoading ? View.VISIBLE : View.GONE}"/>
 
-                <TextView
-                    android:id="@+id/yearTxt"
-                    style="@style/DetailsText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/yearLabel"
-                    android:layout_marginBottom="12dp" />
+        </FrameLayout>
 
-                <TextView
-                    android:id="@+id/genreLabel"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/yearTxt"
-                    android:text="@string/details_genre" />
+    </RelativeLayout>
 
-                <TextView
-                    android:id="@+id/genreTxt"
-                    style="@style/DetailsText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/genreLabel"
-                    android:layout_marginBottom="12dp" />
-
-                <TextView
-                    android:id="@+id/directorLabel"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/genreTxt"
-                    android:text="@string/details_director" />
-
-                <TextView
-                    android:id="@+id/directorTxt"
-                    style="@style/DetailsText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/directorLabel"
-                    android:layout_marginBottom="12dp" />
-
-                <TextView
-                    android:id="@+id/actorsLabel"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/directorTxt"
-                    android:text="@string/details_actors" />
-
-                <TextView
-                    android:id="@+id/actorsTxt"
-                    style="@style/DetailsText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/actorsLabel"
-                    android:layout_marginBottom="12dp" />
-
-                <TextView
-                    android:id="@+id/plotLabel"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/actorsTxt"
-                    android:text="@string/details_plot" />
-
-                <TextView
-                    android:id="@+id/plotTxt"
-                    style="@style/DetailsText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/plotLabel"
-                    android:layout_marginBottom="12dp" />
-
-            </RelativeLayout>
-
-        </ScrollView>
-
-        <ProgressBar
-            android:id="@+id/progressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:indeterminate="true"
-            android:visibility="gone" />
-
-    </FrameLayout>
-
-</RelativeLayout>
+</layout>
