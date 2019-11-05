@@ -13,8 +13,8 @@ import retrofit2.converter.moshi.MoshiConverterFactory
  * Created by Jurica Pleša
  */
 class ApiProvider(
-        baseUrl: String,
-        apiKey: String
+    baseUrl: String,
+    apiKey: String
 ) {
 
     private var moviesApi: MoviesApi
@@ -24,27 +24,27 @@ class ApiProvider(
 
         @JvmStatic
         fun getInstance(baseUrl: String, apiKey: String) = instance
-                ?: synchronized(ApiProvider::class.java) {
-                    instance ?: ApiProvider(baseUrl, apiKey)
-                            .also { instance = it }
-                }
+            ?: synchronized(ApiProvider::class.java) {
+                instance ?: ApiProvider(baseUrl, apiKey)
+                    .also { instance = it }
+            }
     }
 
     init {
         val moshi = Moshi.Builder()
-                .add(KotlinJsonAdapterFactory())
-                .build()
+            .add(KotlinJsonAdapterFactory())
+            .build()
 
         val client = OkHttpClient.Builder()
-                .addInterceptor(MoviesApiKeyInterceptor(apiKey))
-                .build()
+            .addInterceptor(MoviesApiKeyInterceptor(apiKey))
+            .build()
 
         val retrofit = Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .client(client)
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .addConverterFactory(MoshiConverterFactory.create(moshi))
-                .build()
+            .baseUrl(baseUrl)
+            .client(client)
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .build()
         moviesApi = retrofit.create(MoviesApi::class.java)
     }
 
@@ -52,6 +52,13 @@ class ApiProvider(
         return moviesApi.searchMovies(searchInput)
     }
 
-    suspend fun getMovieDetails(imdbId: String) = moviesApi.getMovieDetails(imdbId)
+    suspend fun getMovieDetails(imdbId: String): Result<MovieDetailsResponse> {
+        return try {
+            val result = moviesApi.getMovieDetails(imdbId)
+            Result.Success(result)
+        } catch (ex: Exception) {
+            Result.Error(ex)
+        }
+    }
 
 }

@@ -13,6 +13,6 @@ interface MoviesApi {
     fun searchMovies(@Query("s") searchInput: String): Observable<SearchResponse>
 
     @GET(".")
-    suspend fun getMovieDetails(@Query("i") imdbId: String): Result<MovieDetailsResponse>
+    suspend fun getMovieDetails(@Query("i") imdbId: String): MovieDetailsResponse
 
 }
